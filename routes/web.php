@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\BukuController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,3 +17,5 @@ Route::get('/about', function () {
 
 // Route::get('/posts', [PostController::class, 'index']);
 Route::resource('/posts', PostController::class);
+
+Route::get('/buku', [BukuController::class, 'index']);
