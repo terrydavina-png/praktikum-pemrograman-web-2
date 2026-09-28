@@ -78,4 +78,25 @@ class BukuController extends Controller
 
 
     }
+
+    //fungsi tambah buku
+    public function create()
+    {
+        return view('create');
+    }
+
+    //function simpan buku
+    public function store(Request $request)
+    {
+        $buku = new Buku();
+        $buku->judul = $request->judul;
+        $buku->penulis = $request->penulis;
+        $buku->harga = $request->harga;
+        $buku->tgl_terbit = $request->tanggal_terbit;
+
+        $buku->save();
+
+
+        return redirect('/buku')->with('success', 'Buku berhasil ditambahkan!');
+    }
 }

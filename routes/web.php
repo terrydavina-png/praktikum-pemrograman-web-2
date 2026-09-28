@@ -19,3 +19,5 @@ Route::get('/about', function () {
 Route::resource('/posts', PostController::class);
 
 Route::get('/buku', [BukuController::class, 'index']);
+Route::get('/buku/create', [BukuController::class, 'create']) ->name('buku.create');
+Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');

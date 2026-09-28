@@ -5,53 +5,9 @@
     <title>Data Buku</title>
 </head>
 <body>
+    <a href="{{ route('buku.create') }}" class="btn btn-primary float-end">Tambah Buku</a>
 
     <h1>Data Buku</h1>
-
-    
-    <form method="GET" action="{{ url('/buku') }}">
-        <input
-            type="text"
-            name="keyword"
-            value="{{ $keyword }}"
-            placeholder="Cari judul buku"
-        >
-
-        <button type="submit">Cari</button>
-    </form>
-
-    @if ($keyword)
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Judul</th>
-                    <th>Penulis</th>
-                    <th>Penerbit</th>
-                    <th>Genre</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @forelse ($hasilPencarian as $index => $buku)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $buku->judul }}</td>
-                        <td>{{ $buku->penulis }}</td>
-                        <td>{{ $buku->penerbit }}</td>
-                        <td>{{ $buku->genre }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5">
-                            Buku dengan judul "{{ $keyword }}" tidak ditemukan.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    @endif
-
     <br> 
 
     <table border="1" cellpadding="8">
@@ -188,7 +144,49 @@
     </table>
 
     <h1>Pencarian Buku Berdasarkan Judul</h1>
+     
+    <form method="GET" action="{{ url('/buku') }}">
+        <input
+            type="text"
+            name="keyword"
+            value="{{ $keyword }}"
+            placeholder="Cari judul buku"
+        >
 
+        <button type="submit">Cari</button>
+    </form>
+
+    @if ($keyword)
+        <table border="1" cellpadding="8">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Judul</th>
+                    <th>Penulis</th>
+                    <th>Penerbit</th>
+                    <th>Genre</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse ($hasilPencarian as $index => $buku)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $buku->judul }}</td>
+                        <td>{{ $buku->penulis }}</td>
+                        <td>{{ $buku->penerbit }}</td>
+                        <td>{{ $buku->genre }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5">
+                            Buku dengan judul "{{ $keyword }}" tidak ditemukan.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    @endif
 
 </body>
 </html>
