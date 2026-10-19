@@ -10,7 +10,7 @@ class BukuController extends Controller
     public function index(Request $request)
     {
         // Data seluruh buku dari praktikum sebelumnya
-        $data_buku = Buku::all();
+        $data_buku = Buku::paginate(5);
 
         // Tugas 2: mengambil 5 buku terbaru
         $bukuTerbaru = Buku::orderByDesc('created_at')
@@ -88,15 +88,69 @@ class BukuController extends Controller
     //function simpan buku
     public function store(Request $request)
     {
+        $request->validate([
+            'judul' => 'required',
+            'penulis' => 'required',
+            'harga' => 'required|numeric',
+            'tgl_terbit' => 'required|date',
+        ]);
         $buku = new Buku();
         $buku->judul = $request->judul;
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
-        $buku->tgl_terbit = $request->tanggal_terbit;
+        $buku->tgl_terbit = $request->tgl_terbit;
 
         $buku->save();
 
 
         return redirect('/buku')->with('success', 'Buku berhasil ditambahkan!');
+    }
+    //fungsi edit buku
+    public function edit($id)
+    {
+        $buku = Buku::find($id);
+
+        return view('edit', compact('buku'));
+    }
+    public function update(Request $request, $id)
+    {
+        $buku = Buku::find($id);
+
+        $buku->judul = $request->judul;
+        $buku->penulis = $request->penulis;
+        $buku->harga = $request->harga;
+        $buku->tgl_terbit = $request->tgl_terbit;
+
+        $buku->save();
+
+        return redirect('/buku')->with('success', 'Buku berhasil diperbarui!');
+    }
+    public function destroy($id)
+    {
+        $buku = Buku::find($id);
+
+        $buku->delete();
+
+        return redirect('/buku')->with('success', 'Buku berhasil dihapus!');
+    }
+    public function search(Request $request)
+    {
+       $batas = 5;
+        $cari = $request->cari;
+
+        $data_buku = Buku::where('judul', 'like', "%$cari%")
+            ->orWhere('penulis', 'like', "%$cari%")
+            ->paginate($batas);
+
+        $jumlah_buku = $data_buku->count();
+
+        $no = $batas * ($data_buku->currentPage() - 1);
+
+        return view('search', compact(
+            'jumlah_buku',
+            'data_buku',
+            'no',
+            'cari'
+        ));
     }
 }
