@@ -9,33 +9,42 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/css/bootstrap-datepicker.min.css">
 </head>
 <body>
-    <a href="{{ route('buku.create') }}" class="btn btn-primary float-end">Tambah Buku</a>
-    @if (session('success'))
-        <div id="success-alert" class="alert alert-success">
-            {{ session('success') }}
-        </div>
-
-        <script>
-            setTimeout(function () {
-                const alert = document.getElementById('success-alert');
-
-                if (alert) {
-                    alert.remove();
-                }
-            }, 3000);
-        </script>
-    @endif
+    
     <h1>Data Buku</h1>
     <br> 
-
-    <form action="{{ route('buku.search') }}" method="get">
-        <input type="text"
-            name="cari"
-            class="form-control"
-            placeholder="Cari ..."
-            style="width: 30%; display: inline; margin-top: 10px; margin-bottom: 10px; float: right;">
+    <form method="POST" action="{{ route('logout') }}" class="mb-3">
+        @csrf
+        <span class="me-2">Halo, {{ Auth::user()->name }}</span>
+        <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
     </form>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{{ route('buku.create') }}" class="btn btn-primary float-end">Tambah Buku</a>
+        @if (session('success'))
+            <div id="success-alert" class="alert alert-success">
+                {{ session('success') }}
+            </div>
 
+            <script>
+                setTimeout(function () {
+                    const alert = document.getElementById('success-alert');
+
+                    if (alert) {
+                        alert.remove();
+                    }
+                }, 3000);
+            </script>
+        @endif
+    </div>
+
+    <div class="row mb-3">
+        <form action="{{ route('buku.search') }}" method="get">
+            <input type="text"
+                name="cari"
+                class="form-control"
+                placeholder="Cari ..."
+                style="width: 30%; display: inline; margin-top: 10px; margin-bottom: 10px; float: right;">
+        </form>
+    </div>
     <table border="1" cellpadding="8">
         <thead>
             <tr>
@@ -63,11 +72,11 @@
                         <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning">
                             Edit
                         </a>
-                        <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" style="display:inline; )">
                             @csrf
                             @method('DELETE')
 
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">
                                 Hapus
                             </button>
                         </form>

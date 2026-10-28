@@ -138,7 +138,7 @@ class BukuController extends Controller
        $batas = 5;
         $cari = $request->cari;
 
-        $data_buku = Buku::where('judul', 'like', "%$cari%")
+        $data_buku = Buku::where('judul', 'like', "$cari")
             ->orWhere('penulis', 'like', "%$cari%")
             ->paginate($batas);
 
