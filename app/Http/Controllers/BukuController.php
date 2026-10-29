@@ -116,6 +116,13 @@ class BukuController extends Controller
     {
         $buku = Buku::find($id);
 
+        $request->validate([
+            'judul' => 'required',
+            'penulis' => 'required',
+            'harga' => 'required|numeric',
+            'tgl_terbit' => 'required|date',
+        ]);
+
         $buku->judul = $request->judul;
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
@@ -138,11 +145,11 @@ class BukuController extends Controller
        $batas = 5;
         $cari = $request->cari;
 
-        $data_buku = Buku::where('judul', 'like', "$cari")
+        $data_buku = Buku::where('judul', 'like', "%$cari%")
             ->orWhere('penulis', 'like', "%$cari%")
             ->paginate($batas);
 
-        $jumlah_buku = $data_buku->count();
+        $jumlah_buku = $data_buku->total();
 
         $no = $batas * ($data_buku->currentPage() - 1);
 
