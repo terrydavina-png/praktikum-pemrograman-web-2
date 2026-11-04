@@ -4,10 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Route::get('/about', function () {
 //     return view('about', [
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/buku/{id}', [BukuController::class, 'update'])->name('buku.update');
     Route::delete('/buku/{id}', [BukuController::class, 'destroy'])->name('buku.destroy');
     Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::resource('users', UserController::class)->except('show');
+    });
 });
 //route untuk authentication
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

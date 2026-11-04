@@ -28,6 +28,14 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('buku*') ? 'active' : '' }}" href="/buku">Data Buku</a>
                     </li>
+
+                    @auth
+                        @if (Auth::user()->level === 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('users*') ? 'active' : '' }}" href="{{ route('users.index') }}">Data User</a>
+                            </li>
+                        @endif
+                    @endauth
                 </ul>
 
                 @auth
