@@ -3,9 +3,12 @@
 @section('title', 'Pencarian Buku')
 
 @section('content')
+    @php $isAdmin = Auth::user()->level === 'admin'; @endphp
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h3 mb-0">Hasil Pencarian Buku</h1>
-        <a href="{{ route('buku.create') }}" class="btn btn-primary">Tambah Buku</a>
+        @if ($isAdmin)
+            <a href="{{ route('buku.create') }}" class="btn btn-primary">Tambah Buku</a>    
+        @endif
     </div>
 
     @if (count($data_buku))
@@ -26,7 +29,9 @@
                         <th>Genre</th>
                         <th class="text-end">Harga</th>
                         <th>Tanggal Terbit</th>
-                        <th>Aksi</th>
+                        @if ($isAdmin)
+                            <th>Aksi</th>       
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -39,14 +44,16 @@
                             <td>{{ $buku->genre }}</td>
                             <td class="text-end">Rp {{ number_format($buku->harga, 0, ',', '.') }}</td>
                             <td>{{ $buku->tgl_terbit->format('d/m/Y') }}</td>
-                            <td>
-                                <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">Hapus</button>
-                                </form>
-                            </td>
+                            @if ($isAdmin)
+                                <td>
+                                    <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">Hapus</button>
+                                    </form>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
