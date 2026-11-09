@@ -23,7 +23,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('buku.store') }}">
+                    <form method="POST" action="{{ route('buku.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -45,6 +45,16 @@
                             <label for="tgl_terbit" class="form-label">Tanggal Terbit</label>
                             <input type="text" name="tgl_terbit" id="tgl_terbit" class="form-control" value="{{ old('tgl_terbit') }}">
                         </div>
+                        <div class="mb-3">
+                            <label for="cover" class="form-label">Cover Buku</label>
+                            <input type="file" name="cover" id="cover" class="form-control" accept="image/png,image/jpeg">
+                            <div class="form-text">Format JPG atau PNG, maksimal 2 MB. Boleh dikosongkan.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="PDF" class="form-label">File PDF</label>
+                            <input type="file" name="PDF" id="PDF" class="form-control" accept="application/pdf">
+                            <div class="form-text">Format PDF, maksimal 2 MB. Boleh dikosongkan.</div>
 
                         <div class="d-flex justify-content-between">
                             <a href="/buku" class="btn btn-outline-secondary">Kembali</a>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\buku;
+use Illuminate\Support\Facades\Storage;
 
 class BukuController extends Controller
 {
@@ -93,6 +94,8 @@ class BukuController extends Controller
             'penulis' => 'required',
             'harga' => 'required|numeric',
             'tgl_terbit' => 'required|date',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:2048',
         ]);
         $buku = new Buku();
         $buku->judul = $request->judul;
@@ -100,6 +103,10 @@ class BukuController extends Controller
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
 
+        if ($request->hasFile('cover', 'PDF')) {
+            $buku->cover = $request->file('cover')->store('covers', 'public');
+            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
+        }
         $buku->save();
 
 
@@ -121,12 +128,24 @@ class BukuController extends Controller
             'penulis' => 'required',
             'harga' => 'required|numeric',
             'tgl_terbit' => 'required|date',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:2048',
         ]);
 
         $buku->judul = $request->judul;
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
+        if ($request->hasFile('cover', 'PDF')) {
+            if ($buku->cover) {
+                    Storage::disk('public')->delete($buku->cover);
+                }
+            if ($buku->PDF) {
+                    Storage::disk('public')->delete($buku->PDF);
+                }
+            $buku->cover = $request->file('cover')->store('covers', 'public');
+            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
+        }
 
         $buku->save();
 
@@ -134,6 +153,14 @@ class BukuController extends Controller
     }
     public function destroy($id)
     {
+        if ($buku->cover) {
+            Storage::disk('public')->delete($buku->cover);
+        }
+        
+        if ($buku->PDF){
+            Storage::disk('public')->delete($buku->PDF);
+        }
+
         $buku = Buku::find($id);
 
         $buku->delete();

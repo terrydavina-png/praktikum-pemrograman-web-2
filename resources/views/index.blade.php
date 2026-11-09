@@ -30,11 +30,13 @@
                 <tr>
                     <th>No</th>
                     <th>Judul</th>
+                    <th>Cover</th>
                     <th>Penulis</th>
                     <th>Penerbit</th>
                     <th>Genre</th>
                     <th class="text-end">Harga</th>
                     <th>Tanggal Terbit</th>
+                    <th>PDF</th>
                     @if ($isAdmin)
                         <th>Aksi</th>   
                     @endif
@@ -45,11 +47,24 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $buku->judul }}</td>
+                        <td>
+                            @if ($buku->cover)
+                                <img src="{{ asset('storage/' . $buku->cover) }}" alt="Cover {{ $buku->judul }}" width="60" class="img-thumbnail">
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
                         <td>{{ $buku->penulis }}</td>
                         <td>{{ $buku->penerbit }}</td>
                         <td>{{ $buku->genre }}</td>
                         <td class="text-end">{{ number_format($buku->harga, 0, ',', '.') }}</td>
                         <td>{{ $buku->tgl_terbit->format('d/m/Y') }}</td>
+                        <td>
+                            @if ($buku->PDF)
+                                <a href="{{ asset('storage/' . $buku->PDF) }}" target="_blank">Lihat PDF</a>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
                         @if ($isAdmin)
                             <td>
                                 <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -63,7 +78,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{$isAdmin ? 8 : 7}}" class="text-center text-muted">Belum ada data buku.</td>
+                        <td colspan="{{$isAdmin ? 10 : 9}}" class="text-center text-muted">Belum ada data buku.</td>
                     </tr>
                 @endforelse
             </tbody>
