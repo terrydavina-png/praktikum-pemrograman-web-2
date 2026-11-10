@@ -95,7 +95,7 @@ class BukuController extends Controller
             'harga' => 'required|numeric',
             'tgl_terbit' => 'required|date',
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'PDF' => 'nullable|mimes:pdf|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:10240',
         ]);
         $buku = new Buku();
         $buku->judul = $request->judul;
@@ -103,8 +103,11 @@ class BukuController extends Controller
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
 
-        if ($request->hasFile('cover', 'PDF')) {
+       
+        if ($request->hasFile('cover')) {
             $buku->cover = $request->file('cover')->store('covers', 'public');
+        }
+        if ($request->hasFile('PDF')) {
             $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
         }
         $buku->save();
@@ -129,39 +132,41 @@ class BukuController extends Controller
             'harga' => 'required|numeric',
             'tgl_terbit' => 'required|date',
             'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'PDF' => 'nullable|mimes:pdf|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:10240',
         ]);
 
         $buku->judul = $request->judul;
         $buku->penulis = $request->penulis;
         $buku->harga = $request->harga;
         $buku->tgl_terbit = $request->tgl_terbit;
-        if ($request->hasFile('cover', 'PDF')) {
+       
+        if ($request->hasFile('cover')) {
             if ($buku->cover) {
-                    Storage::disk('public')->delete($buku->cover);
-                }
-            if ($buku->PDF) {
-                    Storage::disk('public')->delete($buku->PDF);
-                }
+                Storage::disk('public')->delete($buku->cover);
+            }
             $buku->cover = $request->file('cover')->store('covers', 'public');
+        }
+        if ($request->hasFile('PDF')) {
+            if ($buku->PDF) {
+                Storage::disk('public')->delete($buku->PDF);
+            }
             $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
         }
-
         $buku->save();
 
         return redirect('/buku')->with('success', 'Buku berhasil diperbarui!');
     }
     public function destroy($id)
     {
+        // destroy(): $buku harus dicari lebih dulu
+        $buku = Buku::find($id);
+
         if ($buku->cover) {
             Storage::disk('public')->delete($buku->cover);
         }
-        
-        if ($buku->PDF){
+        if ($buku->PDF) {
             Storage::disk('public')->delete($buku->PDF);
         }
-
-        $buku = Buku::find($id);
 
         $buku->delete();
 

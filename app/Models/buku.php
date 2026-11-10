@@ -15,6 +15,7 @@ class buku extends Model
     'cover',
     'penerbit',
     'genre',
+    'pdf',
     ];
     protected $casts = [
     'tgl_terbit' => 'date',
