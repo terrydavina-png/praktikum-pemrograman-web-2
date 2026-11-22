@@ -50,6 +50,10 @@
                             <input type="file" name="cover" id="cover" class="form-control" accept="image/png,image/jpeg">
                             <div class="form-text">Format JPG atau PNG, maksimal 2 MB. Boleh dikosongkan.</div>
                         </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Foto</label>
+                            <input type="file" name="foto" id="foto" class="form-control">
+                        </div>
 
                         <div class="mb-3">
                             <label for="PDF" class="form-label">File PDF</label>

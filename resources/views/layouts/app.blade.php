@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container">
-            <a class="navbar-brand" href="/buku">Perpustakaan</a>
+            <a class="navbar-brand" href="/buku">Katalog</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#menuUtama" aria-controls="menuUtama"
@@ -27,6 +27,12 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('buku*') ? 'active' : '' }}" href="/buku">Data Buku</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('list-buku', 'detail-buku/*') ? 'active' : '' }}" href="{{ route('buku.list') }}">Katalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('gallery*') ? 'active' : '' }}" href="{{ route('gallery.index') }}">Galeri</a>
                     </li>
 
                     @auth

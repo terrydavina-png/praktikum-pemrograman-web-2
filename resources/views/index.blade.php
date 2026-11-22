@@ -34,9 +34,9 @@
                     <th>Penulis</th>
                     <th>Penerbit</th>
                     <th>Genre</th>
-                    <th class="text-end">Harga</th>
+                    <th class="text-end">Harga Terkini</th>
                     <th>Tanggal Terbit</th>
-                    <th>PDF</th>
+                    <th>Preview</th>
                     @if ($isAdmin)
                         <th>Aksi</th>   
                     @endif

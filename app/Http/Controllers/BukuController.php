@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\buku;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BukuController extends Controller
 {
@@ -86,35 +87,7 @@ class BukuController extends Controller
         return view('create');
     }
 
-    //function simpan buku
-    public function store(Request $request)
-    {
-        $request->validate([
-            'judul' => 'required',
-            'penulis' => 'required',
-            'harga' => 'required|numeric',
-            'tgl_terbit' => 'required|date',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'PDF' => 'nullable|mimes:pdf|max:10240',
-        ]);
-        $buku = new Buku();
-        $buku->judul = $request->judul;
-        $buku->penulis = $request->penulis;
-        $buku->harga = $request->harga;
-        $buku->tgl_terbit = $request->tgl_terbit;
-
-       
-        if ($request->hasFile('cover')) {
-            $buku->cover = $request->file('cover')->store('covers', 'public');
-        }
-        if ($request->hasFile('PDF')) {
-            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
-        }
-        $buku->save();
-
-
-        return redirect('/buku')->with('success', 'Buku berhasil ditambahkan!');
-    }
+ 
     //fungsi edit buku
     public function edit($id)
     {
@@ -122,56 +95,7 @@ class BukuController extends Controller
 
         return view('edit', compact('buku'));
     }
-    public function update(Request $request, $id)
-    {
-        $buku = Buku::find($id);
-
-        $request->validate([
-            'judul' => 'required',
-            'penulis' => 'required',
-            'harga' => 'required|numeric',
-            'tgl_terbit' => 'required|date',
-            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'PDF' => 'nullable|mimes:pdf|max:10240',
-        ]);
-
-        $buku->judul = $request->judul;
-        $buku->penulis = $request->penulis;
-        $buku->harga = $request->harga;
-        $buku->tgl_terbit = $request->tgl_terbit;
-       
-        if ($request->hasFile('cover')) {
-            if ($buku->cover) {
-                Storage::disk('public')->delete($buku->cover);
-            }
-            $buku->cover = $request->file('cover')->store('covers', 'public');
-        }
-        if ($request->hasFile('PDF')) {
-            if ($buku->PDF) {
-                Storage::disk('public')->delete($buku->PDF);
-            }
-            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
-        }
-        $buku->save();
-
-        return redirect('/buku')->with('success', 'Buku berhasil diperbarui!');
-    }
-    public function destroy($id)
-    {
-        // destroy(): $buku harus dicari lebih dulu
-        $buku = Buku::find($id);
-
-        if ($buku->cover) {
-            Storage::disk('public')->delete($buku->cover);
-        }
-        if ($buku->PDF) {
-            Storage::disk('public')->delete($buku->PDF);
-        }
-
-        $buku->delete();
-
-        return redirect('/buku')->with('success', 'Buku berhasil dihapus!');
-    }
+    
     public function search(Request $request)
     {
        $batas = 5;
@@ -191,5 +115,135 @@ class BukuController extends Controller
             'no',
             'cari'
         ));
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul' => 'required',
+            'penulis' => 'required',
+            'harga' => 'required|numeric',
+            'tgl_terbit' => 'required|date',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:10240',
+        ]);
+        $buku = new Buku();
+        $buku->judul = $request->judul;
+        $buku->buku_seo = $this->buatSlug($request->judul);
+        $buku->penulis = $request->penulis;
+        $buku->harga = $request->harga;
+        $buku->tgl_terbit = $request->tgl_terbit;
+
+        if ($request->hasFile('cover')) {
+            $buku->cover = $request->file('cover')->store('covers', 'public');
+        }
+        if ($request->hasFile('foto')) {
+            $buku->foto = $request->file('foto')->store('foto_buku', 'public');
+        }
+        if ($request->hasFile('PDF')) {
+            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
+        }
+        $buku->save();
+
+        return redirect('/buku')->with('success', 'Buku berhasil ditambahkan!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $buku = Buku::findOrFail($id);
+
+        $request->validate([
+            'judul' => 'required',
+            'penulis' => 'required',
+            'harga' => 'required|numeric',
+            'tgl_terbit' => 'required|date',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'PDF' => 'nullable|mimes:pdf|max:10240',
+        ]);
+
+        $buku->judul = $request->judul;
+        $buku->buku_seo = $this->buatSlug($request->judul, $buku->id);
+        $buku->penulis = $request->penulis;
+        $buku->harga = $request->harga;
+        $buku->tgl_terbit = $request->tgl_terbit;
+
+        if ($request->hasFile('cover')) {
+            if ($buku->cover) {
+                Storage::disk('public')->delete($buku->cover);
+            }
+            $buku->cover = $request->file('cover')->store('covers', 'public');
+        }
+        if ($request->hasFile('foto')) {
+            if ($buku->foto) {
+                Storage::disk('public')->delete($buku->foto);
+            }
+            $buku->foto = $request->file('foto')->store('foto_buku', 'public');
+        }
+        if ($request->hasFile('PDF')) {
+            if ($buku->PDF) {
+                Storage::disk('public')->delete($buku->PDF);
+            }
+            $buku->PDF = $request->file('PDF')->store('pdfs', 'public');
+        }
+        $buku->save();
+
+        return redirect('/buku')->with('success', 'Buku berhasil diperbarui!');
+    }
+
+    public function destroy($id)
+    {
+        $buku = Buku::findOrFail($id);
+
+        if ($buku->cover) {
+            Storage::disk('public')->delete($buku->cover);
+        }
+        if ($buku->foto) {
+            Storage::disk('public')->delete($buku->foto);
+        }
+        if ($buku->PDF) {
+            Storage::disk('public')->delete($buku->PDF);
+        }
+        // Hapus file foto galeri milik buku ini (barisnya terhapus otomatis oleh cascade)
+        foreach ($buku->photos as $photo) {
+            Storage::disk('public')->delete('posts_images/' . $photo->picture);
+        }
+
+        $buku->delete();
+
+        return redirect('/buku')->with('success', 'Buku berhasil dihapus!');
+    }
+
+    // Halaman list buku: foto + judul
+    public function listBuku()
+    {
+        $bukus = Buku::orderBy('judul')->paginate(12);
+
+        return view('list_buku', compact('bukus'));
+    }
+
+    // Halaman detail buku: semua galeri milik buku (dicari lewat slug)
+    public function galbuku($title)
+    {
+        $buku = Buku::where('buku_seo', $title)->firstOrFail();
+        $galeris = $buku->photos()->orderBy('id', 'desc')->paginate(6);
+
+        return view('galeri-buku', compact('buku', 'galeris'));
+    }
+
+    // Membuat slug unik dari judul
+    private function buatSlug(string $judul, ?int $ignoreId = null): string
+    {
+        $asli = Str::slug($judul) ?: 'buku';
+        $slug = $asli;
+        $i = 2;
+
+        while (Buku::where('buku_seo', $slug)
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()) {
+            $slug = $asli . '-' . $i++;
+        }
+
+        return $slug;
     }
 }
